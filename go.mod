@@ -1,4 +1,4 @@
-module github.com/muwanyou/kratos-websocket
+module github.com/muwanyou/kratos-transport
 
 go 1.24.2
 

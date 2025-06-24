@@ -1,4 +1,4 @@
-package main
+package websocket
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gorilla/websocket"
-	"github.com/muwanyou/kratos-websocket/enum"
-	"github.com/muwanyou/kratos-websocket/util"
+	"github.com/muwanyou/kratos-transport/enum"
+	"github.com/muwanyou/kratos-transport/util"
 )
 
 type Server struct {
