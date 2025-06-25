@@ -9,9 +9,17 @@ import (
 	"net/url"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/gorilla/websocket"
 	"github.com/muwanyou/kratos-transport/enum"
+	"github.com/muwanyou/kratos-transport/matcher"
 	"github.com/muwanyou/kratos-transport/util"
+)
+
+var (
+	_ transport.Server     = (*Server)(nil)
+	_ transport.Endpointer = (*Server)(nil)
 )
 
 type Server struct {
@@ -23,6 +31,7 @@ type Server struct {
 	network     string
 	address     string
 	path        string
+	middleware  matcher.Matcher
 	upgrader    *websocket.Upgrader
 	manager     *Manager
 	register    chan *Session
@@ -37,9 +46,10 @@ type ReadHandler func(sessionID string, bytes []byte) error
 
 func NewServer(opts ...ServerOption) *Server {
 	srv := &Server{
-		network: "tcp",
-		address: ":0",
-		path:    "/",
+		network:    "tcp",
+		address:    ":0",
+		path:       "/",
+		middleware: matcher.New(),
 		upgrader: &websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
@@ -81,6 +91,12 @@ func Path(path string) ServerOption {
 		if path != "" {
 			s.path = path
 		}
+	}
+}
+
+func Middleware(ms ...middleware.Middleware) ServerOption {
+	return func(s *Server) {
+		s.middleware.Use(ms...)
 	}
 }
 
